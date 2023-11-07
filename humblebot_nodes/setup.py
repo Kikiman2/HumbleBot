@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "robot_wheel_velocity_control_server = humblebot_nodes.robot_wheel_velocity_control_server:main"
+            "velocity_control=humblebot_nodes.wheel_velocities:main",
+            "direction_publisher=humblebot_nodes.send_robot_directions:main"
         ],
     },
 )
