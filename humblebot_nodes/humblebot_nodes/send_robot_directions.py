@@ -15,8 +15,9 @@ class RobotNewsStationNode(Node):
 
     def publish_direction(self):
         msg = Twist()
-        msg.linear.x = 1.0
-        msg.linear.y = 2.0
+        msg.linear.x = 0.0
+        msg.linear.y = 1.0
+        msg.angular.z = 0.0
         self.publisher_.publish(msg)
          
 

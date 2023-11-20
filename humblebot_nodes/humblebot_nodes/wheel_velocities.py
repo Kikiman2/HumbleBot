@@ -15,13 +15,13 @@ class RobotWheelVelocityControlServerNode(Node):
             Twist, "/cmd_vel", self.callback_robot_direction, 10)
 
         self.publisher = self.create_publisher(Twist, '/humblebot/cmd_vel', 10)
-        self.timer = self.create_timer(1.0, self.publish_data)
+        #self.timer = self.create_timer(1.0, self.publish_data)
         
         self.wheel1 = 0
         self.wheel2 = 0
         self.wheel3 = 0
 
-        self.robot_orientation = 0s
+        self.robot_orientation = 0
         
 
     def publish_data(self):
@@ -32,47 +32,18 @@ class RobotWheelVelocityControlServerNode(Node):
         self.publisher.publish(msg2)
 
     def callback_robot_direction(self, msg):
-        msg = Twist()
         linear_x = msg.linear.x
         linear_y = msg.linear.y
-        self.get_logger().info(str(linear_x))
-        self.get_logger().info(str(linear_y))
-        velocities = []
+        angular_z = msg.angular.z
 
-        if linear_x == 0.0 and linear_y > 0.0:
-            robot_direction = 0
-            velocities = self.calculate_wheel_velocities(robot_direction)
-            self.wheel1 = velocities[0]
-            self.wheel2 = velocities[1]
-            self.wheel3 = velocities[2]
-        elif linear_x == 0.0 and linear_y < 0.0:
-            robot_direction = 180
-            velocities = self.calculate_wheel_velocities(robot_direction)
-            self.wheel1 = velocities[0]
-            self.wheel2 = velocities[1]
-            self.wheel3 = velocities[2]
-        elif linear_y == 0.0 and linear_x > 0.0:
-            robot_direction = 90
-            velocities = self.calculate_wheel_velocities(robot_direction)
-            self.wheel1 = velocities[0]
-            self.wheel2 = velocities[1]
-            self.wheel3 = velocities[2]
-        elif linear_y == 0.0 and linear_x < 0.0:
-            robot_direction = 270
-            velocities = self.calculate_wheel_velocities(robot_direction)
-            self.wheel1 = velocities[0]
-            self.wheel2 = velocities[1]
-            self.wheel3 = velocities[2]
-        elif linear_y == 0.0 and linear_x == 0.0:
-            robot_direction = None
-        else:
-            robot_direction = math.atan(linear_x/linear_y)
-            velocities = self.calculate_wheel_velocities(robot_direction)
-            self.wheel1 = velocities[0]
-            self.wheel2 = velocities[1]
-            self.wheel3 = velocities[2]
+        self.calculate_wheel_velocities(linear_x, linear_y, angular_z)
 
-    def calculate_wheel_velocities(self, robot_orientation):
+        self.publish_data()
+
+
+
+        
+    def calculate_wheel_velocities(self, Vx, Vy, omega):
         """
         Calculate the velocities of each wheel in a three-wheeled omnidirectional robot.
 
@@ -81,19 +52,18 @@ class RobotWheelVelocityControlServerNode(Node):
         :param d: # Distance from the center to each wheel.
         :return: A tuple containing the velocities of the three wheels.
         """
-        # Angles of wheels in degrees (0, 120, 240 degrees)
-        wheel_angles = [60, 180, 300]
+        # Angles of wheels in degrees (60, 180, 270 degrees)
 
-        # Calculate wheel velocities
-        wheel_velocities = []
+        L = 0.5  # Distance from center to wheel axis
 
-        for angle in wheel_angles:
-            # Velocity contribution due to linear speed
-            linear_component = round(math.sin(math.radians(angle - robot_orientation)),3)
+        gamma1 = math.radians(0)
+        gamma2 = math.radians(120)
+        gamma3 = math.radians(240)
 
-            wheel_velocities.append(linear_component)
 
-        return wheel_velocities
+        self.wheel1 = round((Vx * math.cos(gamma1) + Vy * math.sin(gamma1) + L * omega),3)
+        self.wheel2 = round((Vx * math.cos(gamma2) + Vy * math.sin(gamma2) + L * omega),3)
+        self.wheel3 = round((Vx * math.cos(gamma3) + Vy * math.sin(gamma3) + L * omega),3)
 
     
 def main(args=None):
