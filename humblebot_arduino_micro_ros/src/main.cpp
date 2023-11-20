@@ -10,6 +10,7 @@
 
 #include <AccelStepper.h>
 #include <MultiStepper.h>
+#include <math.h>
 
 //Define the number of steps per revolution for your stepper motor.
 const int stepsPerRevolution = 200;
