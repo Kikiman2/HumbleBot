@@ -15,6 +15,8 @@ class RobotNewsStationNode(Node):
         self.declare_parameter("angular_z", 0.0)
 
         self.publisher_ = self.create_publisher(Twist, "/cmd_vel", 10)
+
+        #self.publish_direction()
         self.timer_ = self.create_timer(0.5, self.publish_direction)
 
     def publish_direction(self):

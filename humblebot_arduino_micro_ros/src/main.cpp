@@ -24,6 +24,9 @@ const int ZstepPin = 4;
 const int ZdirPin = 7;
 const int Enable = 8;
 
+const float wheelDiameter = 73.5;
+const float wheelCircumference = PI * wheelDiameter;
+
 
 AccelStepper stepperX(1, XstepPin, XdirPin);  //1 = driver interface type
 AccelStepper stepperY(1, YstepPin, YdirPin);  //1 = driver interface type
@@ -45,7 +48,6 @@ rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
 rcl_node_t node;
-rcl_timer_t timer;
 
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop();}}
 #define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){}}
@@ -57,13 +59,30 @@ void error_loop() {
   }
 }
 
+long velocityToSteps(float velocity) {
+    float velocity_mm_per_s = velocity * 1000.0; // Convert m/s to mm/s
+    float distancePerStep = wheelCircumference / stepsPerRevolution;
+    return (long)(velocity_mm_per_s / distancePerStep);
+}
+
 void subscription_callback(const void * msgin)
 {
 	const  geometry_msgs__msg__Twist * msg = (const geometry_msgs__msg__Twist *)msgin;
-	gotoposition[0] = msg->linear.x;
-  gotoposition[1] = msg->linear.y;
-  gotoposition[2] = msg->linear.z;
 
+  digitalWrite(Enable, LOW);
+
+	gotoposition[0] = round(velocityToSteps(msg->linear.x));
+  gotoposition[1] = round(velocityToSteps(msg->linear.y));
+  gotoposition[2] = round(velocityToSteps(msg->linear.z));
+
+  steppersControl.moveTo(gotoposition);
+  steppersControl.runSpeedToPosition();
+
+  stepperX.setCurrentPosition(0);
+  stepperY.setCurrentPosition(0);
+  stepperZ.setCurrentPosition(0);
+  delay(100);
+  digitalWrite(Enable, HIGH);
 }
 // ------------------------------------------------ROS related part------------------------------------------------
 void setup() {
@@ -89,23 +108,20 @@ void setup() {
 
   // create executor
   RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
-  RCCHECK(rclc_executor_add_timer(&executor, &timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &subscriber, &msg, &subscription_callback, ON_NEW_DATA));
-
-  msg.linear.x = 0;
 
   // ------------------------------------------------Stepper related part------------------------------------------------
   pinMode( Enable,OUTPUT);
-  digitalWrite(Enable, LOW);
+  digitalWrite(Enable, HIGH);
   
   //Set the maximum speed and acceleration in steps per second
-  stepperX.setMaxSpeed(1000);
-  stepperY.setMaxSpeed(1000);
-  stepperZ.setMaxSpeed(1000);
+  stepperX.setMaxSpeed(1500);
+  stepperY.setMaxSpeed(1500);
+  stepperZ.setMaxSpeed(1500);
 
-  stepperX.setAcceleration(500);
-  stepperY.setAcceleration(500);
-  stepperZ.setAcceleration(500);
+  stepperX.setAcceleration(250);
+  stepperY.setAcceleration(250);
+  stepperZ.setAcceleration(250);
 
   stepperX.setCurrentPosition(0);
   stepperY.setCurrentPosition(0);
@@ -119,11 +135,4 @@ void setup() {
 void loop() {
   delay(100);
   RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
-
-  steppersControl.moveTo(gotoposition);
-  steppersControl.runSpeedToPosition();
-
-  stepperX.setCurrentPosition(0);
-  stepperY.setCurrentPosition(0);
-  stepperZ.setCurrentPosition(0);
 }
