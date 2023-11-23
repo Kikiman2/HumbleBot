@@ -24,6 +24,9 @@ class StepperVelocitiesServerNode(Node):
         self.stepsPerRevolution = 1600
         self.L = 0.160  # Distance from center to wheel axis in mm
         self.wheelDiameter = 73.5 # Wheel diameter in mm
+        self.wheel1 = 0
+        self.wheel2 = 0
+        self.wheel3 = 0
 
         # Initialize the GPIO pins
         self.x_step = gpiozero.LED(2)  # x step pin
@@ -68,11 +71,11 @@ class StepperVelocitiesServerNode(Node):
 
         # Send result
         result1 = Steppers.Result()
-        result1.motor_position_x = self.velocityToSteps(wheel_velocities[0])
+        result1.motor_position_x = self.velocityToSteps(self.wheel1)
         result2 = Steppers.Result()
-        result2.motor_position_x = self.velocityToSteps(wheel_velocities[1])
+        result2.motor_position_x = self.velocityToSteps(self.wheel2)
         result3 = Steppers.Result()
-        result3.motor_position_x = self.velocityToSteps(wheel_velocities[2])
+        result3.motor_position_x = self.velocityToSteps(self.wheel3)
 
         return result1, result2, result3
         
@@ -87,18 +90,15 @@ class StepperVelocitiesServerNode(Node):
             """
             # Angles of wheels in degrees (60, 180, 270 degrees)
 
-            wheel_velocities = (0, 0, 0)
-
             gamma1 = math.radians(0)
             gamma2 = math.radians(120)
             gamma3 = math.radians(240)
 
 
-            wheel_velocities[0] = round((Vx * math.cos(gamma1) + Vy * math.sin(gamma1) + self.L * omega),3)
-            wheel_velocities[1] = round((Vx * math.cos(gamma2) + Vy * math.sin(gamma2) + self.L * omega),3)
-            wheel_velocities[2] = round((Vx * math.cos(gamma3) + Vy * math.sin(gamma3) + self.L * omega),3)
+            self.wheel1 = round((Vx * math.cos(gamma1) + Vy * math.sin(gamma1) + self.L * omega),3)
+            self.wheel2 = round((Vx * math.cos(gamma2) + Vy * math.sin(gamma2) + self.L * omega),3)
+            self.wheel3 = round((Vx * math.cos(gamma3) + Vy * math.sin(gamma3) + self.L * omega),3)
 
-            return wheel_velocities
 
     def velocityToSteps(self, velocity):
         velocity_mm_per_s = velocity * 1000.0 # Convert m/s to mm/s
