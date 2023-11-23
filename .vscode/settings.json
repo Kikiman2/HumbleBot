@@ -1,5 +1,5 @@
 {
-    "cmake.sourceDirectory": "/home/en/ros2_ws/src/HumbleBot/humblebot_description",
+    "cmake.sourceDirectory": "/home/pi/ros2_ws/src/HumbleBot/humblebot_bringup",
     "python.autoComplete.extraPaths": [
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
