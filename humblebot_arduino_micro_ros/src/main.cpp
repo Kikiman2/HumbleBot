@@ -5,6 +5,7 @@
 #include <rclc/rclc.h>
 #include <rcl/logging_rosout.h>
 #include <rclc/executor.h>
+#include <rcl_action/rcl_action.h>
 
 #include <geometry_msgs/msg/twist.h>
 

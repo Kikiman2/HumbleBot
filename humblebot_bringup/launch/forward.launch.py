@@ -5,6 +5,16 @@ from launch.actions import TimerAction, Shutdown
 def generate_launch_description():
 
     ld = LaunchDescription()
+    
+    
+        
+    micro_ros_communication = Node(
+        package='micro_ros_agent',
+        executable='micro_ros_agent',
+        name='micro_ros_agent_node',
+        output='screen',
+        arguments=['serial', '--dev', '/dev/ttyACM0']
+    )
 
     wheel_velocities = Node(
         package="humblebot_nodes",
@@ -28,6 +38,7 @@ def generate_launch_description():
         actions=[Shutdown()]  # This will shut down all nodes launched by this launch file
     )
 
+    ld.add_action(micro_ros_communication)
     ld.add_action(wheel_velocities)
     ld.add_action(send_robot_directions)
     ld.add_action(shutdown_timer)
