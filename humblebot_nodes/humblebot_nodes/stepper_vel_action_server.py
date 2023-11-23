@@ -23,7 +23,6 @@ class StepperVelocitiesServerNode(Node):
         self.speed = 0.0002
         self.stepsPerRevolution = 1600
         self.L = 0.160  # Distance from center to wheel axis in mm
-        self.wheelDiameter = 73.5
 
         # Initialize the GPIO pins
         self.x_step = gpiozero.LED(2)  # x step pin
@@ -40,7 +39,7 @@ class StepperVelocitiesServerNode(Node):
         # Enable the motor initially
         self.enable.off()
 
-        self.wheelCircumference = math.pi() * self.wheelDiameter
+        self.wheelCircumference = math.pi() * 73.5 #Wheel diameter
 
         self.get_logger().info("Motor velocities server has been started")
 
