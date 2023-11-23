@@ -20,6 +20,7 @@ class StepperVelocitiesServerNode(Node):
             "motor_velocities",
             execute_callback=self.execute_callback)
         
+        self.speed = 0.0002
         self.stepsPerRevolution = 1600
         self.L = 0.160  # Distance from center to wheel axis in mm
         self.wheelDiameter = 73.5
@@ -131,7 +132,22 @@ class StepperVelocitiesServerNode(Node):
             pass
 
         for _ in range(abs(steps)):
-            self.step()
+            if motor == "x":
+                self.x_step.on()
+                time.sleep(self.speed)
+                self.x_step.off()
+                time.sleep(self.speed)
+            elif motor == "y":
+                self.y_step.on()
+                time.sleep(self.speed)
+                self.y_step.off()
+                time.sleep(self.speed)
+            else:
+                self.z_step.on()
+                time.sleep(self.speed)
+                self.z_step.off()
+                time.sleep(self.speed)
+
 
 
 def main(args=None):

@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
             "velocity_control=humblebot_nodes.wheel_velocities:main",
             "direction_publisher=humblebot_nodes.send_robot_directions:main",
-            "motor_control=humblebot_nodes.stepper_vel_action_server:main"
+            "motor_control_server=humblebot_nodes.stepper_vel_action_server:main",
+            "motor_control_client=humblebot_nodes.stepper_vel_action_client:main"
         ],
     },
 )
