@@ -4,12 +4,6 @@ float32 linear_y
 float32 angular_z
 ---
 # Result
-int64 motor_position_x
-int64 motor_position_y
-int64 motor_position_z
 ---
 # Feedback
-float32 motor_position_x
-float32 motor_position_y
-float32 motor_position_z
 float32 direction

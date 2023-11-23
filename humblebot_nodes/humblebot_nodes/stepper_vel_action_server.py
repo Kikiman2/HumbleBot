@@ -68,16 +68,6 @@ class StepperVelocitiesServerNode(Node):
 
         # Send final state
         goal_handle.succeed()
-
-        # Send result
-        result1 = Steppers.Result()
-        result1.motor_position_x = self.velocityToSteps(self.wheel1)
-        result2 = Steppers.Result()
-        result2.motor_position_x = self.velocityToSteps(self.wheel2)
-        result3 = Steppers.Result()
-        result3.motor_position_x = self.velocityToSteps(self.wheel3)
-
-        return result1, result2, result3
         
     def calculate_wheel_velocities(self, Vx, Vy, omega):
             """
