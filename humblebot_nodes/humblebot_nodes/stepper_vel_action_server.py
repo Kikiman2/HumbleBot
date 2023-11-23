@@ -40,7 +40,7 @@ class StepperVelocitiesServerNode(Node):
         # Enable the motor initially
         self.enable.off()
 
-        self.wheelCircumference = math.pi() * self.wheelDiameter
+        self.wheelCircumference = math.pi * self.wheelDiameter
 
         self.get_logger().info("Motor velocities server has been started")
 
