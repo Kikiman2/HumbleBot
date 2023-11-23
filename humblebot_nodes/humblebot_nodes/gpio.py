@@ -1,32 +1,22 @@
-import gpiozero
 import time
-import RPi.GPIO as GPIO
-#import lgpio
+#import RPi.GPIO as GPIO
+from gpiozero import LED
 
 steps_per_revolution = 200
 
-GPIO.setmode(GPIO.BCM)
+x_step = LED(2)
 
-x_step = GPIO.setup(3, GPIO.OUT)
-y_step = GPIO.setup(5, GPIO.OUT)
-z_step = GPIO.setup(7, GPIO.OUT)
+x_dir = LED(17)
 
-x_dir = GPIO.setup(11, GPIO.OUT)
-y_dir = GPIO.setup(13, GPIO.OUT)
-z_dir = GPIO.setup(15, GPIO.OUT)
-
-enable = GPIO.setup(19, GPIO.OUT)
+enable = LED(10)
 
 
 while True:
-    x_dir.on()
-    y_dir.on()
-    z_dir.on()
+    time.sleep(10)
+    enable.on()
+    print("on")
+    time.sleep(10)
+    enable.off()
+    print("off")    
 
-    for i in range(0, 200):
-        GPIO.output(x_step, GPIO.HIGH)
-        time.sleep(0.500)
-        GPIO.output(x_step, GPIO.LOW)
-        time.sleep(0.500)
         
-
