@@ -64,6 +64,12 @@ class StepperVelocitiesServerNode(Node):
 
         # Send final state
         goal_handle.succeed()
+
+        # Send result
+        result = Steppers()
+        result.is_finished = True
+        return result
+
         
     def calculate_wheel_velocities(self, Vx, Vy, omega):
             """

@@ -3,7 +3,7 @@ import rclpy
 from rclpy.node import Node
 from humblebot_interfaces.action import Steppers
 from rclpy.action import ActionClient
-#from rclpy.action.client import *
+from rclpy.action.client import ClientGoalHandle
 
 
 class StepperVelocitiesClientNode(Node):
@@ -18,25 +18,31 @@ class StepperVelocitiesClientNode(Node):
 
     def send_goal(self, linear_x, linear_y, angular_z):
         # Wait for the server
-        while not self.stepper_motor_velocities_client_.wait_for_server():
-            self.get_logger().warn("Waiting for server...")
-
+        self.get_logger().warn("waiting for the server...")
+        self.stepper_motor_velocities_client_.wait_for_server()
         self.get_logger().info("Server is up")
 
         # Create goal
-        val1 = Steppers.Goal()
-        val1.linear_x = linear_x
-        val2 = Steppers.Goal()
-        val2.linear_y = linear_y
-        val3 = Steppers.Goal()
-        val3.angular_z = angular_z
+        goal = Steppers.Goal()
+        goal.linear_x = linear_x
+        goal.linear_y = linear_y
+        goal.angular_z = angular_z
 
         # Send goal
         self.get_logger().info("Sending goal")
-        self.stepper_motor_velocities_client_.send_goal_async(val1)
-        self.stepper_motor_velocities_client_.send_goal_async(val2)
-        self.stepper_motor_velocities_client_.send_goal_async(val3)
+        self.stepper_motor_velocities_client_.send_goal_async(goal).add_done_callback(self.goal_response_callback)
 
+    def goal_response_callback(self, future):
+        self.goal_handle_: ClientGoalHandle = future.result()
+        if self.goal_handle_.accepted:
+            self.goal_handle_.get_result_async().add_done_callback(self.goal_result_callback)
+
+    def goal_result_callback(self, future):
+        result = future.result().result
+        if result == True:
+            self.get_logger().info("Succesfulle reached the goal")
+        else:
+            self.get_logger().info("Something went wrong")
 
 def main(args=None):
     rclpy.init(args=args)

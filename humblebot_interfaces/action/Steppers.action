@@ -4,6 +4,9 @@ float32 linear_y
 float32 angular_z
 ---
 # Result
+bool is_finished
 ---
 # Feedback
-float32 direction
+float32 wheel1_vel
+float32 wheel2_vel
+float32 wheel3_vel
