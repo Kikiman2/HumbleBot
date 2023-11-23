@@ -39,7 +39,8 @@ class StepperVelocitiesClientNode(Node):
 
     def goal_result_callback(self, future):
         result = future.result().result
-        if result == True:
+        self.get_logger().info(f"{result.is_finished}")
+        if result.is_finished == True:
             self.get_logger().info("Succesfulle reached the goal")
         else:
             self.get_logger().info("Something went wrong")

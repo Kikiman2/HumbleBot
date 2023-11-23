@@ -66,7 +66,7 @@ class StepperVelocitiesServerNode(Node):
         goal_handle.succeed()
 
         # Send result
-        result = Steppers()
+        result = Steppers.Result()
         result.is_finished = True
         return result
 
