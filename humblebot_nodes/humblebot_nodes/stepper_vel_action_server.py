@@ -57,9 +57,9 @@ class StepperVelocitiesServerNode(Node):
 
         self.enable_motor()
         asyncio.run(asyncio.gather(
-            self.rotate(self.velocityToSteps(self.wheel1), "x"), 
-            self.rotate(self.velocityToSteps(self.wheel2), "y"),
-            self.rotate(self.velocityToSteps(self.wheel3), "z")
+            self.rotate(round(self.velocityToSteps(self.wheel1)), "x"), 
+            self.rotate(round(self.velocityToSteps(self.wheel2)), "y"),
+            self.rotate(round(self.velocityToSteps(self.wheel3)), "z")
         ))
 
         # Send final state
