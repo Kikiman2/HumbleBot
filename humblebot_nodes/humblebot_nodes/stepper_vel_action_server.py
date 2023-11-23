@@ -40,9 +40,6 @@ class StepperVelocitiesServerNode(Node):
 
         self.enable = gpiozero.LED(10)  # Enable pin
 
-        # Enable the motor initially
-        self.enable.off()
-
         self.wheelCircumference = math.pi * self.wheelDiameter
 
         self.get_logger().info("Motor velocities server has been started")
@@ -56,15 +53,14 @@ class StepperVelocitiesServerNode(Node):
         # Execute the action
         self.get_logger().info("Executing the goal")
 
-        wheel_velocities = self.calculate_wheel_velocities(linear_x, linear_y, angular_z)
+        self.calculate_wheel_velocities(linear_x, linear_y, angular_z)
 
-        self.enable_motor
+        self.enable_motor()
         asyncio.run(asyncio.gather(
-            self.rotate(self.velocityToSteps(wheel_velocities[0]), "x"), 
-            self.rotate(self.velocityToSteps(wheel_velocities[1]), "y"),
-            self.rotate(self.velocityToSteps(wheel_velocities[2]), "z")
+            self.rotate(self.velocityToSteps(self.wheel1), "x"), 
+            self.rotate(self.velocityToSteps(self.wheel2), "y"),
+            self.rotate(self.velocityToSteps(self.wheel3), "z")
         ))
-
 
         # Send final state
         goal_handle.succeed()
@@ -84,11 +80,9 @@ class StepperVelocitiesServerNode(Node):
             gamma2 = math.radians(120)
             gamma3 = math.radians(240)
 
-
             self.wheel1 = round((Vx * math.cos(gamma1) + Vy * math.sin(gamma1) + self.L * omega),3)
             self.wheel2 = round((Vx * math.cos(gamma2) + Vy * math.sin(gamma2) + self.L * omega),3)
             self.wheel3 = round((Vx * math.cos(gamma3) + Vy * math.sin(gamma3) + self.L * omega),3)
-
 
     def velocityToSteps(self, velocity):
         velocity_mm_per_s = velocity * 1000.0 # Convert m/s to mm/s
@@ -97,11 +91,11 @@ class StepperVelocitiesServerNode(Node):
 
     def enable_motor(self):
         """Enable the motor."""
-        self.enable.on()
+        self.enable.off()
 
     def disable_motor(self):
         """Disable the motor."""
-        self.enable.off()
+        self.enable.on()
 
     def rotate(self, steps, motor):
         """Rotate the motor a given number of steps."""
