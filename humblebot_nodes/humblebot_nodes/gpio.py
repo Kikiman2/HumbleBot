@@ -1,12 +1,13 @@
 import time
-from gpiozero import LED
+import gpiozero
 
-steps_per_revolution = 200  # This might change based on your setup and microstepping settings
+
+steps_per_revolution = 1600  # This might change based on your setup and microstepping settings
 delay_between_steps = 0.0025  # This controls the speed, smaller values = faster speed
 
-x_step = LED(2)  # Step pin
-x_dir = LED(17)  # Direction pin
-enable = LED(10)  # Enable pin
+x_step = gpiozero.LED(2)  # Step pin
+x_dir = gpiozero.LED(17)  # Direction pin
+enable = gpiozero.LED(10)  # Enable pin
 
 # Function to make one step
 def step():
