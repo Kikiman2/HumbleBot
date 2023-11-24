@@ -3,7 +3,8 @@ import rclpy
 import math
 import time
 import gpiozero
-import asyncio
+#import asyncio
+import threading
 from rclpy.node import Node
 from humblebot_interfaces.action import Steppers
 from rclpy.action.server import ServerGoalHandle
@@ -56,11 +57,18 @@ class StepperVelocitiesServerNode(Node):
         self.calculate_wheel_velocities(linear_x, linear_y, angular_z)
 
         self.enable_motor()
-        asyncio.run(asyncio.gather(
-            self.rotate(round(self.velocityToSteps(self.wheel1)), "x"), 
-            self.rotate(round(self.velocityToSteps(self.wheel2)), "y"),
-            self.rotate(round(self.velocityToSteps(self.wheel3)), "z")
-        ))
+        
+        threads = [
+            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel1)), "x")),
+            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel2)), "y")),
+            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel3)), "z")),
+        ]
+
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
 
         # Send final state
         goal_handle.succeed()
