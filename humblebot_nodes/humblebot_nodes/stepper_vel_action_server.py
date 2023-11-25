@@ -122,7 +122,7 @@ class StepperVelocitiesServerNode(Node):
 
     def rotate(self, steps, motor):
 
-        self.adjust_speeds(self, self.stepps_x, self.stepps_y, self.stepps_z)
+        self.adjust_speeds(self.stepps_x, self.stepps_y, self.stepps_z)
 
         if motor == "x" and steps<0:
             self.x_dir.off()
