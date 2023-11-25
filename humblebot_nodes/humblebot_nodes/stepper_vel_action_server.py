@@ -28,6 +28,7 @@ class StepperVelocitiesServerNode(Node):
         self.wheel1 = 0
         self.wheel2 = 0
         self.wheel3 = 0
+        self.travel_time = 5 # secunds
 
         # Initialize the GPIO pins
         self.x_step = gpiozero.LED(2)  # x step pin
@@ -119,11 +120,11 @@ class StepperVelocitiesServerNode(Node):
         elif motor == "x" and steps>0:
             self.x_dir.on()
         elif motor == "y" and steps<0:
-            self.y_dir.on()
+            self.y_dir.off()
         elif motor == "y" and steps>0:
             self.y_dir.on()
         elif motor == "z" and steps<0:
-            self.z_dir.on()
+            self.z_dir.off()
         elif motor == "z" and steps>0:
             self.z_dir.on()
         else:
@@ -132,19 +133,19 @@ class StepperVelocitiesServerNode(Node):
         for _ in range(abs(steps)):
             if motor == "x":
                 self.x_step.on()
-                time.sleep(self.speed)
+                time.sleep(self.travel_time/abs(steps))
                 self.x_step.off()
-                time.sleep(self.speed)
+                time.sleep(self.travel_time/abs(steps))
             elif motor == "y":
                 self.y_step.on()
-                time.sleep(self.speed)
+                time.sleep(self.travel_time/abs(steps))
                 self.y_step.off()
-                time.sleep(self.speed)
+                time.sleep(self.travel_time/abs(steps))
             else:
                 self.z_step.on()
-                time.sleep(self.speed)
+                time.sleep(self.travel_time/abs(steps))
                 self.z_step.off()
-                time.sleep(self.speed)
+                time.sleep(self.travel_time/abs(steps))
 
 
 
