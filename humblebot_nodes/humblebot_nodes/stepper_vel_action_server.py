@@ -115,7 +115,7 @@ class StepperVelocitiesServerNode(Node):
         elif motor == "y" and steps>0:
             self.y_dir.on()
         elif motor == "z" and steps<0:
-            self.z_dir.o()
+            self.z_dir.on()
         elif motor == "z" and steps>0:
             self.z_dir.on()
         else:
