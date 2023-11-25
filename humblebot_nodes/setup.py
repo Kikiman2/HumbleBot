@@ -23,7 +23,9 @@ setup(
             "velocity_control=humblebot_nodes.wheel_velocities:main",
             "direction_publisher=humblebot_nodes.send_robot_directions:main",
             "motor_control_server=humblebot_nodes.stepper_vel_action_server:main",
-            "motor_control_client=humblebot_nodes.stepper_vel_action_client:main"
+            "motor_control_client=humblebot_nodes.stepper_vel_action_client:main",
+            "stop_rplidar_service=humblebot_nodes.stop_rplidar:main",
+            "start_rplidar_service=humblebot_nodes.start_rplidar:main"
         ],
     },
 )

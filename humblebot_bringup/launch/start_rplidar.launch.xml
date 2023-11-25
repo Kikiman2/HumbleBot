@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find-pkg-share rplidar_ros)/launch/rplidar_a1_launch.py"/>
+
+    <node pkg="humblebot_nodes" exec="start_rplidar_service" name="start_rplidar_service"/>
+</launch>
