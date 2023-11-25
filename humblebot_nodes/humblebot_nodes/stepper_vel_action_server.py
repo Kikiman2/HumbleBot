@@ -28,7 +28,15 @@ class StepperVelocitiesServerNode(Node):
         self.wheel1 = 0
         self.wheel2 = 0
         self.wheel3 = 0
-        self.travel_time = 5 # secunds
+
+        self.speed_x = 0
+        self.speed_y = 0
+        self.speed_z = 0
+
+        self.stepps_x = 0
+        self.stepps_y = 0
+        self.stepps_z = 0
+
 
         # Initialize the GPIO pins
         self.x_step = gpiozero.LED(2)  # x step pin
@@ -58,11 +66,15 @@ class StepperVelocitiesServerNode(Node):
         self.calculate_wheel_velocities(linear_x, linear_y, angular_z)
 
         self.enable_motor()
+
+        self.stepps_x = round(self.velocityToSteps(self.wheel1))
+        self.stepps_y = round(self.velocityToSteps(self.wheel2))
+        self.stepps_z = round(self.velocityToSteps(self.wheel3))
         
         threads = [
-            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel1)), "x")),
-            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel2)), "y")),
-            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel3)), "z")),
+            threading.Thread(target=self.rotate, args=(self.stepps_x, "x")),
+            threading.Thread(target=self.rotate, args=(self.stepps_y, "y")),
+            threading.Thread(target=self.rotate, args=(self.stepps_z, "z")),
         ]
 
         for thread in threads:
@@ -81,16 +93,6 @@ class StepperVelocitiesServerNode(Node):
 
         
     def calculate_wheel_velocities(self, Vx, Vy, omega):
-            """
-            Calculate the velocities of each wheel in a three-wheeled omnidirectional robot.
-
-            :param Vx: The orientation angle of the robot (direction of movement).
-            :param Vy: The rotational velocity of the robot.
-            :param omega: # Distance from the center to each wheel.
-            :return: A tuple containing the velocities of the three wheels.
-            """
-            # Angles of wheels in degrees (60, 180, 270 degrees)
-
             gamma1 = math.radians(0)
             gamma2 = math.radians(120)
             gamma3 = math.radians(240)
@@ -104,16 +106,23 @@ class StepperVelocitiesServerNode(Node):
         distancePerStep = self.wheelCircumference / self.stepsPerRevolution
         return velocity_mm_per_s / distancePerStep
 
-    def enable_motor(self):
-        """Enable the motor."""
-        self.enable.off()
+    def calculate_time_for_steps(self, steps):
+        return 2 * self.speed * abs(steps)
+    
+    def adjust_speeds(self, steps_x, steps_y, steps_z):
+        times = [self.calculate_time_for_steps(steps_x), 
+                self.calculate_time_for_steps(steps_y), 
+                self.calculate_time_for_steps(steps_z)]
+        max_time = max(times)
 
-    def disable_motor(self):
-        """Disable the motor."""
-        self.enable.on()
+        # Adjust speed for each motor
+        self.speed_x = (max_time / abs(steps_x)) / 2 if steps_x != 0 else self.speed
+        self.speed_y = (max_time / abs(steps_y)) / 2 if steps_y != 0 else self.speed
+        self.speed_z = (max_time / abs(steps_z)) / 2 if steps_z != 0 else self.speed
 
     def rotate(self, steps, motor):
-        """Rotate the motor a given number of steps."""
+
+        self.adjust_speeds(self, self.stepps_x, self.stepps_y, self.stepps_z)
 
         if motor == "x" and steps<0:
             self.x_dir.off()
@@ -124,7 +133,7 @@ class StepperVelocitiesServerNode(Node):
         elif motor == "y" and steps>0:
             self.y_dir.on()
         elif motor == "z" and steps<0:
-            self.z_dir.off()
+            self.z_dir.o()
         elif motor == "z" and steps>0:
             self.z_dir.on()
         else:
@@ -133,19 +142,25 @@ class StepperVelocitiesServerNode(Node):
         for _ in range(abs(steps)):
             if motor == "x":
                 self.x_step.on()
-                time.sleep(self.travel_time/abs(steps))
+                time.sleep(self.speed_x)
                 self.x_step.off()
-                time.sleep(self.travel_time/abs(steps))
+                time.sleep(self.speed_x)
             elif motor == "y":
                 self.y_step.on()
-                time.sleep(self.travel_time/abs(steps))
+                time.sleep(self.speed_y)
                 self.y_step.off()
-                time.sleep(self.travel_time/abs(steps))
+                time.sleep(self.speed_y)
             else:
                 self.z_step.on()
-                time.sleep(self.travel_time/abs(steps))
+                time.sleep(self.speed_z)
                 self.z_step.off()
-                time.sleep(self.travel_time/abs(steps))
+                time.sleep(self.speed_z)
+
+    def enable_motor(self):
+        self.enable.off()
+
+    def disable_motor(self):
+        self.enable.on()
 
 
 
