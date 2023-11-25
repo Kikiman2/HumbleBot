@@ -29,6 +29,10 @@ class StepperVelocitiesServerNode(Node):
         self.wheel2 = 0
         self.wheel3 = 0
 
+        self.wheel_stepps_1 = 0
+        self.wheel_stepps_2 = 0
+        self.wheel_stepps_3 = 0
+
         # Initialize the GPIO pins
         self.x_step = gpiozero.LED(2)  # x step pin
         self.x_dir = gpiozero.LED(17)    # x direction pin
@@ -58,10 +62,17 @@ class StepperVelocitiesServerNode(Node):
 
         self.enable_motor()
         
+        self.wheel_stepps_1 = round(self.velocityToSteps(self.wheel1))
+        self.get_logger().info(f"Wheel stepps1: {self.wheel_stepps_1}")
+        self.wheel_stepps_2 = round(self.velocityToSteps(self.wheel2))
+        self.get_logger().info(f"Wheel stepps2: {self.wheel_stepps_2}")
+        self.wheel_stepps_3 = round(self.velocityToSteps(self.wheel3))
+        self.get_logger().info(f"Wheel stepps3: {self.wheel_stepps_3}")
+
         threads = [
-            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel1)), "x")),
-            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel2)), "y")),
-            threading.Thread(target=self.rotate, args=(round(self.velocityToSteps(self.wheel3)), "z")),
+            threading.Thread(target=self.rotate, args=(self.wheel_stepps_1, "x")),
+            threading.Thread(target=self.rotate, args=(self.wheel_stepps_2, "y")),
+            threading.Thread(target=self.rotate, args=(self.wheel_stepps_3, "z")),
         ]
 
         for thread in threads:
@@ -94,7 +105,6 @@ class StepperVelocitiesServerNode(Node):
         return velocity_mm_per_s / distancePerStep
 
     def rotate(self, steps, motor):
-        """Rotate the motor a given number of steps."""
 
         if motor == "x" and steps<0:
             self.x_dir.off()
