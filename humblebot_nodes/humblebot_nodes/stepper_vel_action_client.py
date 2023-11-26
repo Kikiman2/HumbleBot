@@ -48,7 +48,7 @@ class StepperVelocitiesClientNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = StepperVelocitiesClientNode()
-    node.send_goal(0.0, 1.0, 0.0)
+    node.send_goal(1.0, 0.0, 0.0)
     rclpy.spin(node)
     rclpy.shutdown()
 

@@ -34,14 +34,14 @@ class StepperVelocitiesServerNode(Node):
         self.wheel_stepps_z = 0
 
         # Initialize the GPIO pins
-        self.x_step = gpiozero.LED(4)  # x step pin
-        self.x_dir = gpiozero.LED(22)    # x direction pin
+        self.x_step = gpiozero.LED(3)  # x step pin
+        self.x_dir = gpiozero.LED(27)    # x direction pin
 
-        self.y_step = gpiozero.LED(2)  # y step pin
-        self.y_dir = gpiozero.LED(17)    # y direction pin
+        self.y_step = gpiozero.LED(4)  # y step pin
+        self.y_dir = gpiozero.LED(22)    # y direction pin
 
-        self.z_step = gpiozero.LED(3)  # z step pin
-        self.z_dir = gpiozero.LED(27)    # z direction pin
+        self.z_step = gpiozero.LED(2)  # z step pin
+        self.z_dir = gpiozero.LED(17)    # z direction pin
 
         self.enable = gpiozero.LED(10)  # Enable pin
 
