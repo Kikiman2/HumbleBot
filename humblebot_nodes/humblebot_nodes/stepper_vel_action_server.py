@@ -90,6 +90,10 @@ class StepperVelocitiesServerNode(Node):
             self.wheel2 = round((Vx * math.cos(gamma2) + Vy * math.sin(gamma2) + self.L * omega),3)
             self.wheel3 = round((Vx * math.cos(gamma3) + Vy * math.sin(gamma3) + self.L * omega),3)
 
+            self.get_logger().info(f"Wheel1: {self.wheel1}")
+            self.get_logger().info(f"Wheel2: {self.wheel2}")
+            self.get_logger().info(f"Wheel2: {self.wheel3}")
+
     def velocityToSteps(self, velocity):
         velocity_mm_per_s = velocity * 1000.0 # Convert m/s to mm/s
         distancePerStep = self.wheelCircumference / self.stepsPerRevolution
