@@ -113,7 +113,7 @@ class StepperVelocitiesServerNode(Node):
             self.y_dir.on()
 
         if self.wheel_stepps_z<0:
-            self.z_dir.on()
+            self.z_dir.off()
         elif self.wheel_stepps_z>0:
             self.z_dir.on()
         
