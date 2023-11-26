@@ -8,24 +8,14 @@ def generate_launch_description():
     
     
         
-    micro_ros_communication = Node(
-        package='micro_ros_agent',
-        executable='micro_ros_agent',
-        name='micro_ros_agent_node',
-        output='screen',
-        arguments=['serial', '--dev', '/dev/ttyACM0']
+    motor_control_server = Node(
+        package='humblebot_nodes',
+        executable='motor_control_server'
     )
 
-    wheel_velocities = Node(
+    motor_control_client = Node(
         package="humblebot_nodes",
-        executable="velocity_control"  
-    )
-
-    send_robot_directions = Node(
-        package="humblebot_nodes",
-        executable="direction_publisher",
-        output='screen',
-        emulate_tty=True,
+        executable="motor_control_client",
         parameters=[
             {'linear_x': 1.0},
             {'linear_y': 0.0},
@@ -34,12 +24,11 @@ def generate_launch_description():
     )
 
     shutdown_timer = TimerAction(
-        period=1.0,  # Delay in seconds
+        period=5.0,  # Delay in seconds
         actions=[Shutdown()]  # This will shut down all nodes launched by this launch file
     )
 
-    ld.add_action(micro_ros_communication)
-    ld.add_action(wheel_velocities)
-    ld.add_action(send_robot_directions)
+    ld.add_action(motor_control_server)
+    ld.add_action(motor_control_client)
     ld.add_action(shutdown_timer)
     return ld

@@ -10,6 +10,15 @@ class StepperVelocitiesClientNode(Node):
     def __init__(self):
         super().__init__("stepper_motor_velocities_client")
 
+        self.declare_parameter("linear_x", 0.0)
+        self.declare_parameter("linear_y", 0.0)
+        self.declare_parameter("angular_z", 0.0)
+
+        self.linear_x = self.get_parameter("linear_x").value
+        self.linear_y = self.get_parameter("linear_y").value
+        self.angular_z = self.get_parameter("angular_z").value
+
+
         self.stepper_motor_velocities_client_ = ActionClient(
             self,
             Steppers,
@@ -48,7 +57,7 @@ class StepperVelocitiesClientNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = StepperVelocitiesClientNode()
-    node.send_goal(1.0, 0.0, 0.0)
+    node.send_goal(node.linear_x, node.linear_y, node.angular_z)
     rclpy.spin(node)
     rclpy.shutdown()
 
