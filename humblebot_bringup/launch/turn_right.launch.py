@@ -19,7 +19,7 @@ def generate_launch_description():
         parameters=[
             {'linear_x': 0.0},
             {'linear_y': 0.0},
-            {'angular_z': -5.75},
+            {'angular_z': (5.75/4)},
         ]
     )
 
