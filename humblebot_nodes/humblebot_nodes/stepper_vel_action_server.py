@@ -86,9 +86,9 @@ class StepperVelocitiesServerNode(Node):
             gamma2 = math.radians(120)
             gamma3 = math.radians(240)
 
-            self.wheel1 = round((Vx * math.cos(gamma1) + Vy * math.sin(gamma1) + self.L * omega),3)
-            self.wheel2 = round((Vx * math.cos(gamma2) + Vy * math.sin(gamma2) + self.L * omega),3)
-            self.wheel3 = round((Vx * math.cos(gamma3) + Vy * math.sin(gamma3) + self.L * omega),3)
+            self.wheel1 = round((Vx * math.sin(gamma1) + Vy * math.cos(gamma1) + self.L * omega),3)
+            self.wheel2 = round((Vx * math.sin(gamma2) + Vy * math.cos(gamma2) + self.L * omega),3)
+            self.wheel3 = round((Vx * math.sin(gamma3) + Vy * math.cos(gamma3) + self.L * omega),3)
 
             self.get_logger().info(f"Wheel1: {self.wheel1}")
             self.get_logger().info(f"Wheel2: {self.wheel2}")
