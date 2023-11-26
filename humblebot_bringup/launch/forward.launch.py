@@ -24,7 +24,7 @@ def generate_launch_description():
     )
 
     shutdown_timer = TimerAction(
-        period=5.0,  # Delay in seconds
+        period=10.0,  # Delay in seconds
         actions=[Shutdown()]  # This will shut down all nodes launched by this launch file
     )
 
