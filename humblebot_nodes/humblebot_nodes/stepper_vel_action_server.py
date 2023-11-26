@@ -117,9 +117,14 @@ class StepperVelocitiesServerNode(Node):
         absy = abs(self.wheel_stepps_y)
         absz = abs(self.wheel_stepps_z)
 
-        counter_x, counter_y, counter_z = 0
+        counter_x = 0
+        counter_y = 0
+        counter_z = 0
 
-        percent, percentx, percenty, percentz = 0.0
+        percent = 0.0
+        percentx = 0.0
+        percenty = 0.0
+        percentz = 0.0
         
 
         max = absx
@@ -157,6 +162,7 @@ class StepperVelocitiesServerNode(Node):
                 counter_z += 1
 
             time.sleep(self.speed)
+        
     
 
     def enable_motor(self):
