@@ -29,9 +29,9 @@ class StepperVelocitiesServerNode(Node):
         self.wheel2 = 0
         self.wheel3 = 0
 
-        self.wheel_stepps_1 = 0
-        self.wheel_stepps_2 = 0
-        self.wheel_stepps_3 = 0
+        self.wheel_stepps_x = 0
+        self.wheel_stepps_y = 0
+        self.wheel_stepps_z = 0
 
         # Initialize the GPIO pins
         self.x_step = gpiozero.LED(2)  # x step pin
@@ -62,26 +62,17 @@ class StepperVelocitiesServerNode(Node):
 
         self.enable_motor()
         
-        self.wheel_stepps_1 = round(self.velocityToSteps(self.wheel1))
-        self.get_logger().info(f"Wheel stepps1: {self.wheel_stepps_1}")
-        self.wheel_stepps_2 = round(self.velocityToSteps(self.wheel2))
-        self.get_logger().info(f"Wheel stepps2: {self.wheel_stepps_2}")
-        self.wheel_stepps_3 = round(self.velocityToSteps(self.wheel3))
-        self.get_logger().info(f"Wheel stepps3: {self.wheel_stepps_3}")
+        self.wheel_stepps_x = round(self.velocityToSteps(self.wheel1))
+        self.get_logger().info(f"Wheel stepps1: {self.wheel_stepps_x}")
+        self.wheel_stepps_y = round(self.velocityToSteps(self.wheel2))
+        self.get_logger().info(f"Wheel stepps2: {self.wheel_stepps_y}")
+        self.wheel_stepps_z = round(self.velocityToSteps(self.wheel3))
+        self.get_logger().info(f"Wheel stepps3: {self.wheel_stepps_z}")
 
-        threads = [
-            threading.Thread(target=self.rotate, args=(self.wheel_stepps_1, "x")),
-            threading.Thread(target=self.rotate, args=(self.wheel_stepps_2, "y")),
-            threading.Thread(target=self.rotate, args=(self.wheel_stepps_3, "z")),
-        ]
-
-        for thread in threads:
-            thread.start()
-
-        for thread in threads:
-            thread.join()
+        self.rotate()
 
         # Send final state
+
         goal_handle.succeed()
 
         # Send result
@@ -104,39 +95,68 @@ class StepperVelocitiesServerNode(Node):
         distancePerStep = self.wheelCircumference / self.stepsPerRevolution
         return velocity_mm_per_s / distancePerStep
 
-    def rotate(self, steps, motor):
+    def rotate(self):
 
-        if motor == "x" and steps<0:
+        
+        if self.wheel_stepps_x <0:
             self.x_dir.off()
-        elif motor == "x" and steps>0:
+        elif self.wheel_stepps_x>0:
             self.x_dir.on()
-        elif motor == "y" and steps<0:
-            self.y_dir.off()
-        elif motor == "y" and steps>0:
-            self.y_dir.on()
-        elif motor == "z" and steps<0:
-            self.z_dir.on()
-        elif motor == "z" and steps>0:
-            self.z_dir.on()
-        else:
-            pass
 
-        for _ in range(abs(steps)):
-            if motor == "x":
+        if self.wheel_stepps_y<0:
+            self.y_dir.off()
+        elif self.wheel_stepps_y>0:
+            self.y_dir.on()
+
+        if self.wheel_stepps_z<0:
+            self.z_dir.on()
+        elif self.wheel_stepps_z>0:
+            self.z_dir.on()
+        
+        absx = abs(self.wheel_stepps_x)
+        absy = abs(self.wheel_stepps_y)
+        absz = abs(self.wheel_stepps_z)
+
+        counter_x, counter_y, counter_z = 0
+
+        percent, percentx, percenty, percentz = 0.0
+        
+
+        max = absx
+        if absy > max:
+            max = absy
+
+        if absz > max:
+            max = absz
+
+        for i in range(max):
+
+            percent = 100 / max * (i)
+            percentx = 100 / absx * counter_x
+            percenty = 100 / absy * counter_y
+            percentz = 100 / absz * counter_z
+
+
+            if percentx <= percent:
                 self.x_step.on()
-                time.sleep(self.speed)
-                self.x_step.off()
-                time.sleep(self.speed)
-            elif motor == "y":
+            if percenty <= percent:
                 self.y_step.on()
-                time.sleep(self.speed)
-                self.y_step.off()
-                time.sleep(self.speed)
-            else:
+            if percentz <= percent:
                 self.z_step.on()
-                time.sleep(self.speed)
+            
+            time.sleep(self.speed)
+
+            if percentx <= percent:
+                self.x_step.off()
+                counter_x += 1
+            if percenty <= percent:
+                self.y_step.off()
+                counter_y += 1
+            if percentz <= percent:
                 self.z_step.off()
-                time.sleep(self.speed)
+                counter_z += 1
+
+            time.sleep(self.speed)
     
 
     def enable_motor(self):
