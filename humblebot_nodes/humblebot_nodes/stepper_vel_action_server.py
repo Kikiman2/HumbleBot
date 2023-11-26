@@ -141,11 +141,23 @@ class StepperVelocitiesServerNode(Node):
         for i in range(max):
 
             percent = 100 / max * (i)
-            percentx = 100 / absx * counter_x
-            percenty = 100 / absy * counter_y
-            percentz = 100 / absz * counter_z
 
+            if absx > 0:
+                percentx =  100 / absx * counter_x
+            else:
+                percentx = 100.0
 
+            if absy > 0:
+                percenty = 100 / absy * counter_y
+            else:
+                percenty = 100.0
+            
+            if absz > 0:
+                percentz = 100 / absz * counter_z
+            else:
+                percentz = 100.0
+
+            
             if percentx <= percent:
                 self.x_step.on()
             if percenty <= percent:
