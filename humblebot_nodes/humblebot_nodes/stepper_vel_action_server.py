@@ -21,7 +21,7 @@ class StepperVelocitiesServerNode(Node):
             "motor_velocities",
             execute_callback=self.execute_callback)
         
-        self.speed = 0.001
+        self.speed = 0.01
         self.stepsPerRevolution = 3200
         self.L = 0.160  # Distance from center to wheel axis in m
         self.wheelDiameter = 73.5 # Wheel diameter in mm
