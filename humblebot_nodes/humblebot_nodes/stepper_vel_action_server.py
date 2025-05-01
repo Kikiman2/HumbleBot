@@ -3,8 +3,6 @@ import rclpy
 import math
 import time
 import gpiozero
-#import asyncio
-import threading
 from rclpy.node import Node
 from humblebot_interfaces.action import Steppers
 from rclpy.action.server import ServerGoalHandle
