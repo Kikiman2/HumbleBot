@@ -10,9 +10,9 @@ class StepperVelocitiesClientNode(Node):
     def __init__(self):
         super().__init__("stepper_motor_velocities_client")
 
-        self.declare_parameter("linear_x", 0.0)
+        self.declare_parameter("linear_x", 1.0)
         self.declare_parameter("linear_y", 1.0)
-        self.declare_parameter("angular_z", 0.0)
+        self.declare_parameter("angular_z", 1.0)
 
         self.linear_x = self.get_parameter("linear_x").value
         self.linear_y = self.get_parameter("linear_y").value

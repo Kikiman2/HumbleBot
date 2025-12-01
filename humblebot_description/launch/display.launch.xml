@@ -1,5 +1,5 @@
 <launch>
-    <let name="urdf_path" value="$(find-pkg-share humblebot_description)/urdf/humblebot.urdf" />
+    <let name="urdf_path" value="$(find-pkg-share humblebot_description)/urdf/humblebot.xacro" />
     <let name="rviz_config_path" value="$(find-pkg-share humblebot_description)/rviz/urdf_config.rviz" />
 
     <node pkg="robot_state_publisher" exec="robot_state_publisher">
