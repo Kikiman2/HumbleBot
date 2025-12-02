@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- variables -->
+        <!-- Dimensions are in mm, mass is in grams -->
+        <xacro:property name="base_radius" value="0.12" />
+        <xacro:property name="base_length" value="0.08" />
+        <xacro:property name="base_mass" value="300.0" />
+
+        <xacro:property name="wheel_radius" value="0.035" />
+        <xacro:property name="wheel_length" value="0.03" />
+        <xacro:property name="wheel_mass" value="20.0" />
+    
+        <xacro:property name="roller_radius" value="0.0075" />
+        <xacro:property name="roller_length" value="0.022" />
+        <xacro:property name="roller_mass" value="3.0" />
+
+
+    <!-- Calculated/Constant variables -->
+
+        <!-- 60 deg and -60 deg components -->
+        <xacro:property name="cos60" value="${0.5}" />
+        <xacro:property name="sin60" value="${0.8660254037844386}" />
+        <xacro:property name="cos_m60" value="${0.5}" />
+        <xacro:property name="sin_m60" value="${-0.8660254037844386}" />
+        <!-- 180 deg components -->
+        <xacro:property name="cos180" value="${-1.0}" />
+        <xacro:property name="sin180" value="${0.0}" />
+
+        <!-- wheel center positions (derived from base radius and angle) -->
+        <xacro:property name="wheel60_x" value="${base_radius * cos60}" />
+        <xacro:property name="wheel60_y" value="${base_radius * sin60}" />
+        <xacro:property name="wheel300_x" value="${base_radius * cos180}" />
+        <xacro:property name="wheel300_y" value="${base_radius * sin180}" />
+        <xacro:property name="wheel180_x" value="${base_radius * cos_m60}" />
+        <xacro:property name="wheel180_y" value="${base_radius * sin_m60}" />
+        <xacro:property name="half_wheel_radius" value="${wheel_radius / 2.0}" />
+
+
+    <!-- macros -->
+
+        <xacro:macro name="wheel_link" params="wheel_degree">
+            <link name="wheel_${wheel_degree}deg">
+                <visual>
+                    <geometry>
+                        <cylinder radius="${wheel_radius}" length="${wheel_length}" />
+                    </geometry>
+                    <origin xyz="0 0 ${wheel_length / 2.0}" rpy="0 0 0" />
+                    <material name="green" />
+                </visual>
+                <collision>
+                    <geometry>
+                        <cylinder radius="${wheel_radius}" length="${wheel_length}" />
+                    </geometry>
+                    <origin xyz="0 0 ${wheel_length / 2.0}" rpy="0 0 0" />
+                </collision>
+                <xacro:cylinder_inertia mass="${wheel_mass / 1000}" radius="${wheel_radius}" length="${wheel_length}" o_xyz="0 0 ${wheel_length / 2.0}" o_rpy="0 0 0" />
+            </link>
+        </xacro:macro>
+
+        <xacro:macro name="wheel_roller_link" params="wheel_degree roller_index">
+            <link name="wheel_${wheel_degree}deg_roller_${roller_index}">
+                <visual>
+                    <geometry>
+                        <cylinder radius="${roller_radius}" length="${roller_length}" />
+                    </geometry>
+                    <origin xyz="0 0 0" rpy="0 0 0" />
+                    <material name="black" />
+                </visual>
+                <collision>
+                    <geometry>
+                        <cylinder radius="${roller_radius}" length="${roller_length}" />
+                    </geometry>
+                    <origin xyz="0 0 0" rpy="0 0 0" />
+                </collision>
+                <xacro:cylinder_inertia mass="${roller_mass / 1000}" radius="${roller_radius}" length="${roller_length}" o_xyz="0 0 0" o_rpy="0 0 0" />
+            </link>
+        </xacro:macro>
+
+        <!-- Joint macros -->
+        <xacro:macro name="joint_fixed" params="name parent child origin_xyz origin_rpy">
+            <joint name="${name}" type="fixed">
+                <parent link="${parent}" />
+                <child link="${child}" />
+                <origin xyz="${origin_xyz}" rpy="${origin_rpy}" />
+            </joint>
+        </xacro:macro>
+
+        <xacro:macro name="joint_axis" params="name type parent child axis_xyz origin_xyz origin_rpy">
+            <joint name="${name}" type="${type}">
+                <parent link="${parent}" />
+                <child link="${child}" />
+                <axis xyz="${axis_xyz}" />
+                <origin xyz="${origin_xyz}" rpy="${origin_rpy}" />
+            </joint>
+        </xacro:macro>
+
+    <!-- Base link -->
+
+        <link name="base_footprint" />
+
+        <link name="base_link">
+            <visual>
+                <geometry>
+                    <cylinder radius="${base_radius}" length="${base_length}" />
+                    </geometry>
+                    <origin xyz="0 0 ${base_length / 2.0}" rpy="0 0 0" />
+                <material name="green" />
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder radius="${base_radius}" length="${base_length}" />
+                </geometry>
+                <origin xyz="0 0 ${base_length / 2.0}" rpy="0 0 0" />
+            </collision>
+            <xacro:cylinder_inertia mass="${base_mass / 1000}" radius="${base_radius}" length="${base_length}" o_xyz="0 0 ${base_length / 2.0}" o_rpy="0 0 0" />
+        </link>
+
+    <!--Wheel 60deg links-->
+
+        <xacro:wheel_link wheel_degree="60" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="1" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="2" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="3" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="4" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="5" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="6" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="7" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="8" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="9" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="10" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="11" />
+        <xacro:wheel_roller_link wheel_degree="60" roller_index="12" />
+
+    <!--Wheel 300deg links-->
+
+        <xacro:wheel_link wheel_degree="300" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="1" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="2" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="3" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="4" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="5" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="6" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="7" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="8" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="9" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="10" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="11" />
+        <xacro:wheel_roller_link wheel_degree="300" roller_index="12" />
+
+    <!--Wheel 180deg links-->
+
+        <xacro:wheel_link wheel_degree="180" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="1" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="2" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="3" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="4" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="5" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="6" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="7" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="8" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="9" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="10" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="11" />
+        <xacro:wheel_roller_link wheel_degree="180" roller_index="12" />
+
+    <!--Wheel 60deg joints-->
+
+        <xacro:joint_fixed name="base_joint" parent="base_footprint" child="base_link" origin_xyz="0 0 ${wheel_radius}" origin_rpy="0 0 0" />
+        <xacro:joint_axis name="base_wheel60_joint" type="continuous" parent="base_link" child="wheel_60deg" axis_xyz="0 0 1" origin_xyz="${wheel60_x} ${wheel60_y} 0" origin_rpy="${-pi / 3.0} ${pi / 2.0} 0" />
+        <xacro:joint_axis name="wheel_60deg_roller_1_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_1" axis_xyz="0 0 1" origin_xyz="${wheel_radius} 0 0" origin_rpy="${pi / 2.0} 0 0" />
+        <xacro:joint_axis name="wheel_60deg_roller_2_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_2" axis_xyz="0 0 1" origin_xyz="-${wheel_radius} 0 0" origin_rpy="${pi / 2.0} 0 0" />
+        <xacro:joint_axis name="wheel_60deg_roller_3_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_3" axis_xyz="0 0 1" origin_xyz="-${half_wheel_radius} ${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${-pi / 3.0}" />
+        <xacro:joint_axis name="wheel_60deg_roller_4_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_4" axis_xyz="0 0 1" origin_xyz="${half_wheel_radius} -${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${-pi / 3.0}" />
+        <xacro:joint_axis name="wheel_60deg_roller_5_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_5" axis_xyz="0 0 1" origin_xyz="-${half_wheel_radius} -${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${pi / 3.0}" />
+        <xacro:joint_axis name="wheel_60deg_roller_6_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_6" axis_xyz="0 0 1" origin_xyz="${half_wheel_radius} ${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${pi / 3.0}" />
+        <xacro:joint_axis name="wheel_60deg_roller_7_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_7" axis_xyz="0 0 1" origin_xyz="0 ${wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 ${pi / 2.0}" />
+        <xacro:joint_axis name="wheel_60deg_roller_8_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_8" axis_xyz="0 0 1" origin_xyz="0 -${wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 ${pi / 2.0}" />
+        <xacro:joint_axis name="wheel_60deg_roller_9_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_9" axis_xyz="0 0 1" origin_xyz="-${wheel_length} -${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 0.57" />
+        <xacro:joint_axis name="wheel_60deg_roller_10_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_10" axis_xyz="0 0 1" origin_xyz="${wheel_length} ${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 0.57" />
+        <xacro:joint_axis name="wheel_60deg_roller_11_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_11" axis_xyz="0 0 1" origin_xyz="-${wheel_length} ${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 -0.57" />
+        <xacro:joint_axis name="wheel_60deg_roller_12_joint" type="continuous" parent="wheel_60deg" child="wheel_60deg_roller_12" axis_xyz="0 0 1" origin_xyz="${wheel_length} -${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 -0.57" /> 
+
+    <!--Wheel 300deg joints-->
+
+        <xacro:joint_axis name="base_wheel300_joint" type="continuous" parent="base_link" child="wheel_300deg" axis_xyz="0 0 1" origin_xyz="${wheel300_x} ${wheel300_y} 0" origin_rpy="0 ${pi / 2.0} ${pi}" />
+        <xacro:joint_axis name="wheel_300deg_roller_1_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_1" axis_xyz="0 0 1" origin_xyz="${wheel_radius} 0 0" origin_rpy="${pi / 2.0} 0 0" />
+        <xacro:joint_axis name="wheel_300deg_roller_2_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_2" axis_xyz="0 0 1" origin_xyz="-${wheel_radius} 0 0" origin_rpy="${pi / 2.0} 0 0" />
+        <xacro:joint_axis name="wheel_300deg_roller_3_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_3" axis_xyz="0 0 1" origin_xyz="-${half_wheel_radius} ${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${-pi / 3.0}" />
+        <xacro:joint_axis name="wheel_300deg_roller_4_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_4" axis_xyz="0 0 1" origin_xyz="${half_wheel_radius} -${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${-pi / 3.0}" />
+        <xacro:joint_axis name="wheel_300deg_roller_5_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_5" axis_xyz="0 0 1" origin_xyz="-${half_wheel_radius} -${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${pi / 3.0}" />
+        <xacro:joint_axis name="wheel_300deg_roller_6_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_6" axis_xyz="0 0 1" origin_xyz="${half_wheel_radius} ${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${pi / 3.0}" />
+        <xacro:joint_axis name="wheel_300deg_roller_7_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_7" axis_xyz="0 0 1" origin_xyz="0 ${wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 ${pi / 2.0}" />
+        <xacro:joint_axis name="wheel_300deg_roller_8_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_8" axis_xyz="0 0 1" origin_xyz="0 -${wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 ${pi / 2.0}" />
+        <xacro:joint_axis name="wheel_300deg_roller_9_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_9" axis_xyz="0 0 1" origin_xyz="-${wheel_length} -${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 0.57" />
+        <xacro:joint_axis name="wheel_300deg_roller_10_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_10" axis_xyz="0 0 1" origin_xyz="${wheel_length} ${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 0.57" />
+        <xacro:joint_axis name="wheel_300deg_roller_11_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_11" axis_xyz="0 0 1" origin_xyz="-${wheel_length} ${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 -0.57" />
+        <xacro:joint_axis name="wheel_300deg_roller_12_joint" type="continuous" parent="wheel_300deg" child="wheel_300deg_roller_12" axis_xyz="0 0 1" origin_xyz="${wheel_length} -${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 -0.57" />
+
+    <!--Wheel 180deg joints-->
+
+        <xacro:joint_axis name="base_wheel180_joint" type="continuous" parent="base_link" child="wheel_180deg" axis_xyz="0 0 1" origin_xyz="${wheel180_x} ${wheel180_y} 0" origin_rpy="1.04 ${pi / 2.0} 0" />
+        <xacro:joint_axis name="wheel_180deg_roller_1_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_1" axis_xyz="0 0 1" origin_xyz="${wheel_radius} 0 0" origin_rpy="${pi / 2.0} 0 0" />
+        <xacro:joint_axis name="wheel_180deg_roller_2_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_2" axis_xyz="0 0 1" origin_xyz="-${wheel_radius} 0 0" origin_rpy="${pi / 2.0} 0 0" />
+        <xacro:joint_axis name="wheel_180deg_roller_3_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_3" axis_xyz="0 0 1" origin_xyz="-${half_wheel_radius} ${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${-pi / 3.0}" />
+        <xacro:joint_axis name="wheel_180deg_roller_4_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_4" axis_xyz="0 0 1" origin_xyz="${half_wheel_radius} -${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${-pi / 3.0}" />
+        <xacro:joint_axis name="wheel_180deg_roller_5_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_5" axis_xyz="0 0 1" origin_xyz="-${half_wheel_radius} -${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${pi / 3.0}" />
+        <xacro:joint_axis name="wheel_180deg_roller_6_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_6" axis_xyz="0 0 1" origin_xyz="${half_wheel_radius} ${wheel_length} 0" origin_rpy="${pi / 2.0} 0 ${pi / 3.0}" />
+        <xacro:joint_axis name="wheel_180deg_roller_7_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_7" axis_xyz="0 0 1" origin_xyz="0 ${wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 ${pi / 2.0}" />
+        <xacro:joint_axis name="wheel_180deg_roller_8_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_8" axis_xyz="0 0 1" origin_xyz="0 -${wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 ${pi / 2.0}" />
+        <xacro:joint_axis name="wheel_180deg_roller_9_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_9" axis_xyz="0 0 1" origin_xyz="-${wheel_length} -${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 0.57" />
+        <xacro:joint_axis name="wheel_180deg_roller_10_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_10" axis_xyz="0 0 1" origin_xyz="${wheel_length} ${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 0.57" />
+        <xacro:joint_axis name="wheel_180deg_roller_11_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_11" axis_xyz="0 0 1" origin_xyz="-${wheel_length} ${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 -0.57" />
+        <xacro:joint_axis name="wheel_180deg_roller_12_joint" type="continuous" parent="wheel_180deg" child="wheel_180deg_roller_12" axis_xyz="0 0 1" origin_xyz="${wheel_length} -${half_wheel_radius} ${wheel_length}" origin_rpy="${pi / 2.0} 0 -0.57" />
+
+
+</robot> 
