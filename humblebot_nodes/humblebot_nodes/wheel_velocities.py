@@ -2,12 +2,13 @@
 import rclpy
 import math
 import time
-import gpiozero
+import warnings
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from humblebot_interfaces.action import Steppers
-from rclpy.action.server import ServerGoalHandle
-from rclpy.action import ActionServer
+
+# Suppress gpiozero pin factory warnings
+warnings.filterwarnings("ignore", message=".*Falling back from lgpio.*")
+import gpiozero
 
 
 
@@ -21,13 +22,6 @@ class RobotWheelVelocityControlServerNode(Node):
 
         self.publisher = self.create_publisher(Twist, '/humblebot/cmd_vel', 10)
 
-        # Action server for stepper motor velocities
-        self.stepper_motor_velocities_server_ = ActionServer(
-            self,
-            Steppers,
-            "motor_velocities",
-            execute_callback=self.execute_callback)
-        
         # Stepper motor parameters
         self.speed = 0.00001
         self.stepsPerRevolution = 6400
@@ -57,7 +51,7 @@ class RobotWheelVelocityControlServerNode(Node):
 
         self.robot_orientation = 0
 
-        self.get_logger().info("Robot wheel control server with action server has been started")
+        self.get_logger().info("Robot wheel control node has been started")
         
 
     def publish_data(self):
@@ -67,15 +61,10 @@ class RobotWheelVelocityControlServerNode(Node):
         msg2.linear.z = float(self.wheel3)
         self.publisher.publish(msg2)
 
-    def execute_callback(self, goal_handle: ServerGoalHandle):
-        """Execute callback for the stepper motor velocities action server."""
-        # Get request from goal
-        linear_x = goal_handle.request.linear_x
-        linear_y = goal_handle.request.linear_y
-        angular_z = goal_handle.request.angular_z
-
-        # Execute the action
-        self.get_logger().info("Executing motor velocities goal")
+    def callback_robot_direction(self, msg):
+        linear_x = msg.linear.x
+        linear_y = msg.linear.y
+        angular_z = msg.angular.z
 
         self.calculate_wheel_velocities(linear_x, linear_y, angular_z)
 
@@ -89,20 +78,6 @@ class RobotWheelVelocityControlServerNode(Node):
         self.get_logger().info(f"Wheel stepps3: {self.wheel_stepps_z}")
 
         self.rotate()
-
-        goal_handle.succeed()
-
-        # Send result
-        result = Steppers.Result()
-        result.is_finished = True
-        return result
-
-    def callback_robot_direction(self, msg):
-        linear_x = msg.linear.x
-        linear_y = msg.linear.y
-        angular_z = msg.angular.z
-
-        self.calculate_wheel_velocities(linear_x, linear_y, angular_z)
 
         self.publish_data()
 
