@@ -10,5 +10,9 @@
 
     <xacro:include filename="$(find humblebot_description)/urdf/mobile_base.xacro" />
 
+    <!-- Lidar -->
+
+    <xacro:include filename="$(find humblebot_description)/urdf/lidar.xacro" />
+
 
 </robot>

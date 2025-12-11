@@ -1,5 +1,10 @@
 <launch>
-    <include file="$(find-pkg-share rplidar_ros)/launch/rplidar_a1_launch.py"/>
+    <!-- Include rplidar launch and pass explicit serial parameters -->
+    <include file="$(find-pkg-share rplidar_ros)/launch/rplidar_a1_launch.py">
+        <!-- Adjust these values to match your device and lidar model -->
+        <arg name="serial_port">/dev/ttyUSB0</arg>
+        <arg name="serial_baudrate">115200</arg>
+    </include>
 
     <node pkg="humblebot_nodes" exec="stop_rplidar_service" name="stop_rplidar_service"/>
 </launch>
