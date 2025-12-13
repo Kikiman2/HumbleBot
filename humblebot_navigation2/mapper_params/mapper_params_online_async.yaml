@@ -10,7 +10,7 @@ slam_toolbox:
     ceres_loss_function: None
 
     # ROS Parameters
-    odom_frame: odom
+    odom_frame: base_footprint
     map_frame: map
     base_frame: base_footprint
     scan_topic: /scan
@@ -26,7 +26,7 @@ slam_toolbox:
 
     debug_logging: false
     throttle_scans: 1
-    transform_publish_period: 0.02 #if 0 never publishes odometry
+    transform_publish_period: 0 #if 0 never publishes odometry last value:0.02
     map_update_interval: 5.0
     resolution: 0.05
     min_laser_range: 0.0 #for rastering images
