@@ -3,16 +3,13 @@
 <robot name="humblebot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- Common Properties -->
-    
     <xacro:include filename="$(find humblebot_description)/urdf/common_properties.xacro" />
 
     <!-- Mobile Base -->
-
     <xacro:include filename="$(find humblebot_description)/urdf/mobile_base.xacro" />
 
     <!-- Lidar -->
-
     <xacro:include filename="$(find humblebot_description)/urdf/lidar.xacro" />
 
-
 </robot>
+
